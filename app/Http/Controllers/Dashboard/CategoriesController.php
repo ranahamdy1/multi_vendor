@@ -46,7 +46,7 @@ class CategoriesController extends Controller
         //mass assignment
         $category = Category::create($request->all());
         //PRG
-        return redirect()->route('categories.index')->with('success', 'Category created!');
+        return redirect()->route('dashboard.categories.index')->with('success', 'Category created!');
     }
 
     /**
@@ -62,7 +62,9 @@ class CategoriesController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $category= Category::findOrFail($id);
+        $parents = Category::where('id' , '<>', $id)->get();
+        return view('dashboard.categories.edit', compact('category', 'parents'));
     }
 
     /**
@@ -70,7 +72,9 @@ class CategoriesController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $category= Category::find($id);
+        $category->update($request->all());
+        return redirect()->route('dashboard.categories.index')->with('success', 'Category updated!');
     }
 
     /**

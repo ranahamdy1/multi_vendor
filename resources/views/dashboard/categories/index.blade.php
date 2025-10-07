@@ -9,7 +9,7 @@
 @section('content')
 
     <div class="mb-5">
-        <a href="{{ route('categories.create') }}" class="btn btn-sm btn-outline-primary mr-2">Create</a>
+        <a href="{{ route('dashboard.categories.create') }}" class="btn btn-sm btn-outline-primary mr-2">Create</a>
     </div>
 
     @if(session()->has('success'))
@@ -40,10 +40,10 @@
                 <td>{{$category->parent_id}}</td>
                 <td>{{$category->created_at}}</td>
                 <td>
-                    <a href="{{ route('categories.edit', $category->id) }}" class="btn btn-sm btn-outline-success">Edit</a>
+                    <a href="{{ route('dashboard.categories.edit', $category->id) }}" class="btn btn-sm btn-outline-success">Edit</a>
                 </td>
                 <td>
-                    <form action="{{ route('categories.destroy', $category->id) }}" method="POST">
+                    <form action="{{ route('dashboard.categories.destroy', $category->id) }}" method="POST">
                         @csrf
                         <!-- Form Method Spoofing -->
                         <input type="hidden" name="_method" value="delete">
