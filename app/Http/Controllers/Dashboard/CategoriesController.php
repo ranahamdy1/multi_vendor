@@ -63,7 +63,10 @@ class CategoriesController extends Controller
     public function edit(string $id)
     {
         $category= Category::findOrFail($id);
-        $parents = Category::where('id' , '<>', $id)->get();
+        $parents = Category::where('id' , '<>', $id)
+            ->where(function ($query) use ($id){
+                $query->orwhere('parent_id' , '<>', $id);
+            })->get();
         return view('dashboard.categories.edit', compact('category', 'parents'));
     }
 
@@ -82,6 +85,14 @@ class CategoriesController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+//        $category = Category::findOrFail($id);
+//        $category->delete();
+
+        //==
+        //Category::where('id', '=', $id)->delete();
+        //==
+        Category::destroy($id);
+
+        return redirect()->route('dashboard.categories.index')->with('success', 'Category deleted!');
     }
 }
