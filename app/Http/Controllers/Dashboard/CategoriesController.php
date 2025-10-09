@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class CategoriesController extends Controller
@@ -24,7 +25,8 @@ class CategoriesController extends Controller
     public function create()
     {
         $parents = Category::all();
-        return view('dashboard.categories.create', compact('parents'));
+        $category = new Category();
+        return view('dashboard.categories.create', compact('parents', 'category'));
     }
 
     /**
@@ -43,8 +45,16 @@ class CategoriesController extends Controller
         $request->merge([
             'slug' => Str::slug($request->post('name'))
         ]);
+
+        $data = $request->except('image');
+        if($request->hasFile('image')){
+            $file = $request->file('image');
+            $path = $file->store('uploads',['disk' => 'public']);
+            $data['image'] = $path;
+        }
+
         //mass assignment
-        $category = Category::create($request->all());
+        $category = Category::create($data);
         //PRG
         return redirect()->route('dashboard.categories.index')->with('success', 'Category created!');
     }
@@ -76,7 +86,20 @@ class CategoriesController extends Controller
     public function update(Request $request, string $id)
     {
         $category= Category::find($id);
-        $category->update($request->all());
+
+        $old_image = $category->image;
+        $data = $request->except('image');
+        if($request->hasFile('image')){
+            $file = $request->file('image');
+            $path = $file->store('uploads',['disk' => 'public']);
+            $data['image'] = $path;
+        }
+
+        $category->update($data);
+
+        if ($old_image && isset($data['image'])){
+            Storage::disk('public')->delete($old_image);
+        }
         return redirect()->route('dashboard.categories.index')->with('success', 'Category updated!');
     }
 
