@@ -47,11 +47,7 @@ class CategoriesController extends Controller
         ]);
 
         $data = $request->except('image');
-        if($request->hasFile('image')){
-            $file = $request->file('image');
-            $path = $file->store('uploads',['disk' => 'public']);
-            $data['image'] = $path;
-        }
+        $data['image'] = $this->uploadImage($request);
 
         //mass assignment
         $category = Category::create($data);
@@ -89,15 +85,12 @@ class CategoriesController extends Controller
 
         $old_image = $category->image;
         $data = $request->except('image');
-        if($request->hasFile('image')){
-            $file = $request->file('image');
-            $path = $file->store('uploads',['disk' => 'public']);
-            $data['image'] = $path;
-        }
+
+        $data['image'] = $this->uploadImage($request);
 
         $category->update($data);
 
-        if ($old_image && isset($data['image'])){
+        if ($old_image && $data['image']){
             Storage::disk('public')->delete($old_image);
         }
         return redirect()->route('dashboard.categories.index')->with('success', 'Category updated!');
@@ -108,14 +101,28 @@ class CategoriesController extends Controller
      */
     public function destroy(string $id)
     {
-//        $category = Category::findOrFail($id);
-//        $category->delete();
+        $category = Category::findOrFail($id);
+        $category->delete();
+        if ($category->image)
+        {
+            Storage::disk('public')->delete($category->image);
+        }
 
         //==
         //Category::where('id', '=', $id)->delete();
         //==
-        Category::destroy($id);
+        //Category::destroy($id);
 
         return redirect()->route('dashboard.categories.index')->with('success', 'Category deleted!');
+    }
+
+    protected function uploadImage(Request $request)
+    {
+        if(!$request->hasFile('image')){
+            return;
+        }
+            $file = $request->file('image');
+            $path = $file->store('uploads',['disk' => 'public']);
+            return $path;
     }
 }

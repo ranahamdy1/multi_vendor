@@ -20,7 +20,7 @@
 
 <div class="mb-3">
     <label for="image" class="form-label">Image</label>
-    <input type="file" name="image" id="image" class="form-control">
+    <input type="file" name="image" id="image" class="form-control" accept="image/*">
     @if($category->image)
         <img src="{{asset('storage/' . $category->image)}}" alt="" height="60">
     @endif
