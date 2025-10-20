@@ -91,7 +91,7 @@ class CategoriesController extends Controller
         $category= Category::find($id);
 
         $old_image = $category->image;
-        //$data = $request->except('image');
+        $data = $request->except('image');
         $new_image = $this->uploadImage($request);
         if ($new_image){
             $data['image'] = $new_image;
