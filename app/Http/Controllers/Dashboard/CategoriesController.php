@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CategoryRequest;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -34,6 +35,11 @@ class CategoriesController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate(Category::rules(), [
+            'required' => 'this field is required.',
+            'unique' => 'this is the name already exists'
+        ]);
+
 //        $request->input('name');
 //        $request->post('name');
 //        $request->query('name');
@@ -79,18 +85,20 @@ class CategoriesController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(CategoryRequest $request, string $id)
     {
+
         $category= Category::find($id);
 
         $old_image = $category->image;
-        $data = $request->except('image');
-
-        $data['image'] = $this->uploadImage($request);
-
+        //$data = $request->except('image');
+        $new_image = $this->uploadImage($request);
+        if ($new_image){
+            $data['image'] = $new_image;
+        }
         $category->update($data);
 
-        if ($old_image && $data['image']){
+        if ($old_image && $new_image){
             Storage::disk('public')->delete($old_image);
         }
         return redirect()->route('dashboard.categories.index')->with('success', 'Category updated!');
