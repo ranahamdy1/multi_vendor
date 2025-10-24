@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Store extends Model
 {
-    const CREATED_AT = 'createdAt';
-    const UPDATED_AT = 'updatedAt';
+    use HasFactory;
+    const CREATED_AT = 'created_at';
+    const UPDATED_AT = 'updated_at';
     protected $connection = 'mysql';
     protected $table = 'stores';
     protected $primaryKey = 'id';

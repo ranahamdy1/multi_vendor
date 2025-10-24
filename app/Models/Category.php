@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Validation\Rule;
@@ -9,7 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Category extends Model
 {
-    use SoftDeletes;
+    use HasFactory,softDeletes;
     protected $fillable = [
         'name',
         'parent_id',
