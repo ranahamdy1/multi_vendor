@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Validation\Rule;
 use Illuminate\Database\Eloquent\Builder;
 
 class Category extends Model
 {
+    use SoftDeletes;
     protected $fillable = [
         'name',
         'parent_id',
@@ -59,7 +61,7 @@ class Category extends Model
                  ],
                 'parent_id' => ['nullable','int','exists:categories,id'],
                 'image' => ['image','max:1024','dimensions:min_width=100,min_height=100'],
-                'status' => 'required|in:0,1',
+                'status' => 'required|in:active,archived',
         ];
     }
 }

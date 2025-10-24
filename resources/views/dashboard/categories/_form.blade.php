@@ -50,15 +50,17 @@
 <div class="mb-3">
     <label class="form-label d-block">Status</label>
     <div class="form-check form-check-inline">
-        <input type="radio" name="status" id="active" value="1" class="form-check-input"
-            @checked(old('status', $category->status) == 1)>
+        <input type="radio" name="status" id="active" value="active" class="form-check-input"
+            @checked(old('status', $category->status) == 'active')>
         <label for="active" class="form-check-label">Active</label>
     </div>
+
     <div class="form-check form-check-inline">
-        <input type="radio" name="status" id="archived" value="0" class="form-check-input"
-            @checked(old('status', $category->status) == 0)>
+        <input type="radio" name="status" id="archived" value="archived" class="form-check-input"
+            @checked(old('status', $category->status) == 'archived')>
         <label for="archived" class="form-check-label">Archived</label>
     </div>
+
     @error('status')
     <div class="text-danger mt-1">{{ $message }}</div>
     @enderror

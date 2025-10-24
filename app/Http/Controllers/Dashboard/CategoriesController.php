@@ -118,14 +118,15 @@ class CategoriesController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Category $category)
     {
-        $category = Category::findOrFail($id);
+        //$category = Category::findOrFail($id);
         $category->delete();
-        if ($category->image)
-        {
-            Storage::disk('public')->delete($category->image);
-        }
+
+//        if ($category->image)
+//        {
+//            Storage::disk('public')->delete($category->image);
+//        }
 
         //==
         //Category::where('id', '=', $id)->delete();
@@ -143,5 +144,37 @@ class CategoriesController extends Controller
             $file = $request->file('image');
             $path = $file->store('uploads',['disk' => 'public']);
             return $path;
+    }
+
+    public function trash()
+    {
+        $categories = Category::onlyTrashed()->paginate(10);
+
+        return view('dashboard.categories.trash', compact('categories'));
+    }
+
+    public function restore(Request $request,$id)
+    {
+        $category = Category::onlyTrashed()->findOrFail($id);
+        $category->restore();
+
+        return redirect()->route('dashboard.categories.trash')->with('success', 'Category Restored!');
+    }
+
+    public function forceDelete($id)
+    {
+        $category = Category::onlyTrashed()->findOrFail($id);
+        $category->forceDelete();
+
+        if ($category->image)
+        {
+            Storage::disk('public')->delete($category->image);
+        }
+
+        if($category->image){
+            Storage::disk('public')->delete($category->image);
+        }
+
+        return redirect()->route('dashboard.categories.trash')->with('success', 'Category Deleted Forever!');
     }
 }

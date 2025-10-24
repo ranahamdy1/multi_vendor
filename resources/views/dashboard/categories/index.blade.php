@@ -10,6 +10,7 @@
 
     <div class="mb-5">
         <a href="{{ route('dashboard.categories.create') }}" class="btn btn-sm btn-outline-primary mr-2">Create</a>
+        <a href="{{ route('dashboard.categories.trash') }}" class="btn btn-sm btn-outline-dark">Trash</a>
     </div>
 
     <x-alert type="success"/>
@@ -64,7 +65,7 @@
             <tr>
                 <td colspan="7"> no categories found</td>
             </tr>
-            @endforelse
+        @endforelse
         </tbody>
 
     </table>
