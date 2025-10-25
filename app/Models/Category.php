@@ -65,4 +65,21 @@ class Category extends Model
                 'status' => 'required|in:active,archived',
         ];
     }
+
+    //relation
+    public function products()
+    {
+        return $this->hasMany(Product::class,'category_id','id');
+
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(Category::class,'parent_id','id')->withDefault(['name' => 'Main Category']);
+    }
+
+    public function children()
+    {
+        return $this->hasMany(Category::class,'parent_id','id');
+    }
 }

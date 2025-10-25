@@ -15,6 +15,7 @@ class Product extends Model
         static::addGlobalScope('store',new StoreScope());
     }
 
+    //relation
     public function category()
     {
         return $this->belongsTo(Category::class,'category_id','id');
