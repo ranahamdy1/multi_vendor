@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Facade;
+
 return [
 
     /*
@@ -67,6 +69,8 @@ return [
 
     'timezone' => 'UTC',
 
+    'currency' => 'USD',
+
     /*
     |--------------------------------------------------------------------------
     | Application Locale Configuration
@@ -123,4 +127,7 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'aliases' => Facade::defaultAliases()->merge([
+        'currency' =>App\Helpers\Currency::class,
+    ])->toArray(),
 ];
