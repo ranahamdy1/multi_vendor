@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\Front\CartController;
+use App\Http\Controllers\Front\CheckOutController;
 use App\Http\Controllers\Front\HomeController;
 use App\Http\Controllers\Front\ProductsController;
 use App\Http\Controllers\ProfileController;
@@ -16,6 +17,9 @@ Route::get('/products', [ProductsController::class, 'index'])->name('products.in
 Route::get('/products/{product:slug}', [ProductsController::class, 'show'])->name('products.show');
 
 Route::resource('/cart', CartController::class);
+
+Route::get('checkout',[CheckOutController::class , 'create'])->name('checkout');
+Route::post('checkout',[CheckOutController::class , 'store']);
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
