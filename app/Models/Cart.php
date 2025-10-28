@@ -5,7 +5,9 @@ namespace App\Models;
 use App\Observers\CartObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Builder;
 
 class Cart extends Model
 {
@@ -18,9 +20,19 @@ class Cart extends Model
     protected static function booted()
     {
         static::observe(CartObserver::class);
-//        static::creating(function (Cart  $cart) {
-//            $cart->id = Str::uuid();
-//        });
+        static::addGlobalScope('cookie_id',function(Builder $builder) {
+            $builder->where('cookie_id','=',Cart::getCookieId());
+        });
+    }
+
+    public static function getCookieId()
+    {
+        $cookie_id = Cookie::get('cart_id');
+        if (!$cookie_id) {
+            $cookie_id = Str::uuid();
+            Cookie::queue('cart_id', $cookie_id, 30*60*24);
+        }
+        return $cookie_id;
     }
 
     public function user()

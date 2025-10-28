@@ -12,16 +12,24 @@ use Illuminate\Support\Facades\App;
 class CartController extends Controller
 {
     protected $cart;
+    public $items;
+    public $total;
     public function __construct(CartRepository $cart)
     {
         $this->cart = $cart;
+        $this->items = $cart->get();
+        $this->total = $cart->total();
     }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return view('front.cart', ['cart' => $this->cart]);
+        return view('front.cart', [
+            'cart' => $this->cart,
+            'items' => $this->items,
+            'total' => $this->total,
+        ]);
     }
 
     /**
@@ -33,29 +41,32 @@ class CartController extends Controller
             'product_id' => ['required','int','exists:products,id'],
             'quantity' => ['nullable','int','min:1'],
         ]);
+
         $product = Product::find($request->input('product_id'));
         $this->cart->add($product, $request->post('quantity'));
+
         return redirect()->route('cart.index')->with('success', 'Product added to cart successfully!');
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, CartRepository $cart)
+    public function update(Request $request, $id)
     {
         $request->validate([
-            'product_id' => ['required','int','exists:products,id'],
-            'quantity' => ['nullable','int','min:1'],
+            'quantity' => ['required','int','min:1'],
         ]);
-        $product = Product::find($request->input('product_id'));
-        $cart->update($product, $request->post('quantity'));
+        $this->cart->update($id, $request->post('quantity'));
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(CartRepository $cart, string $id)
+    public function destroy(string $id)
     {
-        $cart->delete($id);
+        $this->cart->delete($id);
+        return[
+            'message' => 'item successfully removed',
+        ];
     }
 }
