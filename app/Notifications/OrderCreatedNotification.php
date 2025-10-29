@@ -8,10 +8,12 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class OrderCreatedNotification extends Notification
+class OrderCreatedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
+
     protected $order;
+
     /**
      * Create a new notification instance.
      */
@@ -27,18 +29,17 @@ class OrderCreatedNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        // نعيد ترتيبها بشكل صحيح
+        $channels = ['database', 'mail'];
 
-        $channels = ['database'];
-        if ($notifiable->notification_preferences['order_created']['sms']??false){
+        // لو المستخدم مفعّل تفضيلات معينة
+        if ($notifiable->notification_preferences['order_created']['sms'] ?? false) {
             $channels[] = 'vonage';
         }
-        if ($notifiable->notification_preferences['order_created']['mail']??false){
-            $channels[] = 'mail';
-        }
-        if ($notifiable->notification_preferences['order_created']['broadcast']??false){
+        if ($notifiable->notification_preferences['order_created']['broadcast'] ?? false) {
             $channels[] = 'broadcast';
         }
+
         return $channels;
     }
 
@@ -47,25 +48,36 @@ class OrderCreatedNotification extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        $addr= $this->order->billingAddress;
+        $addr = $this->order->billingAddress()->first();
+
         return (new MailMessage)
             ->subject("New Order #{$this->order->number}")
-            //->from()
-            ->greeting("hi {$notifiable->name}")
-            ->line("A New Order #{$this->order->number} created by{$addr->name} from {$addr->country_name}")
-            ->action('View Order', url('/dashboard'))
+            ->greeting("Hi {$notifiable->name},")
+            ->line("A new order #{$this->order->number} was created by {$addr->name} from {$addr->country_name}.")
+            ->action('View Order', url('/dashboard/orders/' . $this->order->id))
             ->line('Thank you for using our application!');
     }
 
     /**
+     * Store notification in the database.
+     */
+    public function toDatabase(object $notifiable): array
+    {
+        $addr = $this->order->billingAddress()->first();
+
+        return [
+            'body' => "A new order #{$this->order->number} was created by {$addr->name} from {$addr->country_name}.",
+            'icon' => 'far fa-bell',
+            'url' => url('/dashboard/orders/' . $this->order->id),
+            'order_id' => $this->order->id,
+        ];
+    }
+
+    /**
      * Get the array representation of the notification.
-     *
-     * @return array<string, mixed>
      */
     public function toArray(object $notifiable): array
     {
-        return [
-            //
-        ];
+        return $this->toDatabase($notifiable);
     }
 }
