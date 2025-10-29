@@ -29,7 +29,7 @@ class CheckOutController extends Controller
     public function store(Request $request, CartRepository $cart)
     {
         $request->validate([
-            // يمكنك إضافة التحقق من البيانات هنا حسب الحاجة
+
         ]);
 
         $items = $cart->get()->groupBy('product.store_id')->all();
@@ -64,7 +64,7 @@ class CheckOutController extends Controller
                     }
                 }
 
-                // ✅ إرسال الحدث بعد إنشاء كل Order
+                //إرسال الحدث بعد إنشاء كل Order
                 event(new OrderCreated($order));
             }
 
@@ -78,6 +78,6 @@ class CheckOutController extends Controller
             throw $e;
         }
 
-        return redirect()->route('home')->with('success', 'تم إنشاء الطلب بنجاح');
+        return redirect()->route('home')->with('success','Doneee');
     }
 }
