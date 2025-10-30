@@ -5,6 +5,7 @@ namespace App\Notifications;
 use App\Models\Order;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -30,7 +31,7 @@ class OrderCreatedNotification extends Notification implements ShouldQueue
     public function via(object $notifiable): array
     {
         // نعيد ترتيبها بشكل صحيح
-        $channels = ['database', 'mail'];
+        $channels = ['database', 'mail', 'broadcast'];
 
         // لو المستخدم مفعّل تفضيلات معينة
         if ($notifiable->notification_preferences['order_created']['sms'] ?? false) {
@@ -73,6 +74,17 @@ class OrderCreatedNotification extends Notification implements ShouldQueue
         ];
     }
 
+    public function toBroadcast( $notifiable)
+    {
+        $addr = $this->order->billingAddress()->first();
+
+        return new BroadcastMessage([
+            'body' => "A new order #{$this->order->number} was created by {$addr->name} from {$addr->country_name}.",
+            'icon' => 'far fa-bell',
+            'url' => url('/dashboard/orders/' . $this->order->id),
+            'order_id' => $this->order->id,
+        ]);
+    }
     /**
      * Get the array representation of the notification.
      */
