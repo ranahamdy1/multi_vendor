@@ -11,17 +11,20 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //  هذا الميدل وير سيشتغل في كل الطلبات في التطبيق
+        // الميدل ويرات العامة
         $middleware->append([
             \App\Http\Middleware\MarkNotificationAsRead::class,
         ]);
 
-        //  تعريف أسماء مختصرة للميدل ويرات الأخرى
+        // الأسماء المختصرة للميدل ويرات
         $middleware->alias([
             'auth.type' => \App\Http\Middleware\CheckUserType::class,
             'lastActive' => \App\Http\Middleware\UpdateUserLastActiveAt::class,
         ]);
     })
+    ->withProviders([
+        App\Providers\FortifyServiceProvider::class,
+    ])
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })
