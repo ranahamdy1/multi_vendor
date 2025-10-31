@@ -94,16 +94,27 @@
                             </div>
                             <ul class="user-login">
                                 <li>
-                                    <a href="{{ route('logout') }}"
-                                       onclick="event.preventDefault(); document.getElementById('logout').submit()">Sign
-                                        Out</a>
+                                    <a href="{{ route('admin.logout') }}" onclick="event.preventDefault(); document.getElementById('logout').submit()">Sign Out</a>
                                 </li>
-                                <form action="{{ route('logout') }}" id="logout" method="post"
-                                      style="display:none">
+                                <form action="{{ route('admin.logout') }}" id="logout" method="post" style="display:none">
                                     @csrf
                                 </form>
                             </ul>
                         @else
+                            @auth
+                                <div class="user">
+                                    <i class="lni lni-user"></i>
+                                    {{Auth::user()->name}}
+                                </div>
+                                <ul class="user-login">
+                                    <li>
+                                        <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout').submit()">{{ Lang::get('Sign out') }}</a>
+                                    </li>
+                                    <form action="{{ route('logout') }}" id="logout" method="post" style="display: none">
+                                        @csrf
+                                    </form>
+                                </ul>
+                            @else
                             <div class="user">
                                 <i class="lni lni-user"></i>
                                 {{ __('Hello') }}
@@ -116,6 +127,7 @@
                                     <a href="{{ route('register') }}">{{ __('Register') }}</a>
                                 </li>
                             </ul>
+                                @endif
                         @endauth
                     </div>
                 </div>

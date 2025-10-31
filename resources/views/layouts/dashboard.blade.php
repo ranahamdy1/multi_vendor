@@ -26,6 +26,16 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <li class="nav-item">
                 <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
             </li>
+
+            <li class="nav-item">
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="btn btn-link nav-link" style="color: #dc3545; text-decoration: none;">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </form>
+            </li>
+
             <li class="nav-item d-none d-sm-inline-block">
                 <a href="index3.html" class="nav-link">Home</a>
             </li>

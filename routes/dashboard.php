@@ -8,9 +8,9 @@ use App\Http\Middleware\CheckUserType;
 use Illuminate\Support\Facades\Route;
 
 Route::group([
-    'middleware' => ['auth', 'auth.type:super-admin,admin'],//CheckUserType::class = auth.type
+    'middleware' => ['auth:admin'],//CheckUserType::class = auth.type
     'as' => 'dashboard.',
-    'prefix' => 'dashboard',
+    'prefix' => 'admin/dashboard',
     //'namespace' => 'App\Http\Controllers\Dashboard',
 ], function () {
     Route::get('/profile',[ProfileController::class,'edit'])->name('profile.edit');
