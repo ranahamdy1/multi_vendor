@@ -2,13 +2,16 @@
 
 namespace App\Providers;
 
+use App\Actions\Fortify\AuthenticateUser;
 use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\ResetUserPassword;
 use App\Actions\Fortify\UpdateUserPassword;
 use App\Actions\Fortify\UpdateUserProfileInformation;
+use App\Models\Admin;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
@@ -70,6 +73,7 @@ class FortifyServiceProvider extends ServiceProvider
 
         if (Config::get('fortify.guard') === 'admin')
         {
+            Fortify::authenticateUsing([new AuthenticateUser,'authenticate']);
             Fortify::viewPrefix('auth.');
         }else{
             Fortify::viewPrefix('front.auth.');
