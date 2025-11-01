@@ -94,41 +94,26 @@
                             </div>
                             <ul class="user-login">
                                 <li>
-                                    <a href="{{ route('admin.logout') }}" onclick="event.preventDefault(); document.getElementById('logout').submit()">Sign Out</a>
+                                    <a href="{{ route('logout') }}"
+                                       onclick="event.preventDefault(); document.getElementById('logout').submit()">
+                                        {{ __('Sign Out') }}
+                                    </a>
                                 </li>
-                                <form action="{{ route('admin.logout') }}" id="logout" method="post" style="display:none">
+                                <form action="{{ route('logout') }}" id="logout" method="post" style="display:none">
                                     @csrf
                                 </form>
                             </ul>
                         @else
-                            @auth
-                                <div class="user">
-                                    <i class="lni lni-user"></i>
-                                    {{Auth::user()->name}}
-                                </div>
-                                <ul class="user-login">
-                                    <li>
-                                        <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout').submit()">{{ Lang::get('Sign out') }}</a>
-                                    </li>
-                                    <form action="{{ route('logout') }}" id="logout" method="post" style="display: none">
-                                        @csrf
-                                    </form>
-                                </ul>
-                            @else
                             <div class="user">
                                 <i class="lni lni-user"></i>
                                 {{ __('Hello') }}
                             </div>
                             <ul class="user-login">
-                                <li>
-                                    <a href="{{ route('login') }}">{{ Lang::get('Sign In') }}</a>
-                                </li>
-                                <li>
-                                    <a href="{{ route('register') }}">{{ __('Register') }}</a>
-                                </li>
+                                <li><a href="{{ route('login') }}">{{ __('Sign In') }}</a></li>
+                                <li><a href="{{ route('register') }}">{{ __('Register') }}</a></li>
                             </ul>
-                                @endif
                         @endauth
+
                     </div>
                 </div>
             </div>
@@ -182,6 +167,27 @@
                                 <span>(+100) 123 456 7890</span>
                             </h3>
                         </div>
+                        {{-- ✅ User Auth Section moved from topbar --}}
+                        <div class="user-auth ms-4">
+                            @auth
+                                <div class="user d-inline-block me-2 text-dark">
+                                    <i class="lni lni-user"></i>
+                                    {{ Auth::user()->name }}
+                                </div>
+                                <a href="{{ route('logout') }}"
+                                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                                   class="btn btn-sm btn-outline-dark">
+                                    {{ __('Sign Out') }}
+                                </a>
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:none;">
+                                    @csrf
+                                </form>
+                            @else
+                                <a href="{{ route('login') }}" class="btn btn-sm btn-outline-dark me-2">{{ __('Sign In') }}</a>
+                                <a href="{{ route('register') }}" class="btn btn-sm btn-dark">{{ __('Register') }}</a>
+                            @endauth
+                        </div>
+
                         <div class="navbar-cart">
                             <div class="wishlist">
                                 <a href="javascript:void(0)">
